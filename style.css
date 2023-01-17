@@ -11,12 +11,35 @@ html {
 body {
     height: 100%;
     display: flex;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
+    gap: 80px;
+}
+
+.verses {
+    width: 550px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.player-input {
+    display: flex;
+    flex-direction: column;
+}
+
+#vs {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+.current-turn {
+    background-color: rgb(58, 224, 58);
 }
 
 table {
     border: 1px solid black;
-    margin: auto;
 }
 
 td {
