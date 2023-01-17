@@ -12,16 +12,23 @@ const gameBoard = (function () {
   const gameSquares = [tl, tc, tr, lc, c, rc, bl, bc, br];
 
   for (let square of gameSquares) {
-    square.addEventListener("click", drawX);
+    square.addEventListener("click", draw);
   }
 
-  function drawX(e) {
-    e.target.textContent = "X";
-    console.log("yo");
+  function draw(e) {
+    if (e.target.textContent !== "") {
+      return;
+    }
+    if (playerXTurn) {
+      e.target.textContent = "X";
+    } else {
+      e.target.textContent = "O";
+    }
+    playerXTurn = !playerXTurn;
   }
-
-  //   return { drawX };
 })();
+
+let playerXTurn = true;
 
 const newPlayer = function (name) {
   return { name };
