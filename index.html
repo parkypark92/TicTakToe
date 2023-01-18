@@ -10,6 +10,7 @@
 </head>
 <body>
     <header class="verses">
+        <div class="player1-name"></div>
         <div class="player-input first-player">
             <h2>Add First Player</h2>
             <input type="text" name="player-one" id="player1" value="Player1">
@@ -18,28 +19,32 @@
         <div>
             <p id="vs">VS</p>
         </div>
+        <div class="player2-name"></div>
         <div class="player-input second-player">
             <h2>Add Second Player</h2>
             <input type="text" name="player-two" id="player2" value="Player2">
             <button class="add-player-two">JOIN</button>
         </div>
     </header>
-    <table>
-        <tr>
-            <td id="top-left"></td>
-            <td id="top-center"></td>
-            <td id="top-right"></td>
-        </tr>
-        <tr>
-            <td id="left-center"></td>
-            <td id="center"></td>
-            <td id="right-center"></td>
-        </tr>
-        <tr>
-            <td id="bottom-left"></td>
-            <td id="bottom-center"></td>
-            <td id="bottom-right"></td>
-        </tr>
-    </table>
+    <div class="game-play-area">
+        <table>
+            <tr>
+                <td id="top-left"></td>
+                <td id="top-center"></td>
+                <td id="top-right"></td>
+            </tr>
+            <tr>
+                <td id="left-center"></td>
+                <td id="center"></td>
+                <td id="right-center"></td>
+            </tr>
+            <tr>
+                <td id="bottom-left"></td>
+                <td id="bottom-center"></td>
+                <td id="bottom-right"></td>
+            </tr>
+        </table>
+        <button class="reset-button">RESET</button>
+    </div>
 </body>
 </html>

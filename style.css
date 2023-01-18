@@ -5,11 +5,11 @@
 }
 
 html {
-    height: 100%;
+    min-height: 100%;
 }
 
 body {
-    height: 100%;
+    min-height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -18,15 +18,25 @@ body {
 }
 
 .verses {
+    height: 115px;
     width: 550px;
+    padding-top: 50px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
 .player-input {
+    width: 200px;
     display: flex;
     flex-direction: column;
+}
+
+.player1-name, .player2-name {
+    width: 200px;
+    font-size: 2em;
+    font-weight: bold;
+    text-align: center;
 }
 
 #vs {
@@ -48,4 +58,12 @@ td {
     border: 1px solid black;
     text-align: center;
     font-size: 5em;
+}
+
+.reset-button {
+    margin: 50px 0px;
+}
+
+.hidden {
+    display: none;
 }
