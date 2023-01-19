@@ -1,70 +1,72 @@
 //PLAYERS MODULE
 const players = (function () {
-  let playerOne;
-  let playerTwo;
-  let playersAdded = 0;
-  const newPlayer = function (name) {
-    return { name };
+  const player = function (
+    inputDisplayClass,
+    inputNameId,
+    nameDisplayClass,
+    joinButtonClass
+  ) {
+    return {
+      name: "",
+      inputDisplay: document.querySelector(inputDisplayClass),
+      inputName: document.querySelector(inputNameId),
+      nameDisplay: document.querySelector(nameDisplayClass),
+      displayName: function () {
+        this.nameDisplay.textContent = this.name;
+      },
+      add: document.querySelector(joinButtonClass),
+      toggleHidden: function () {
+        this.nameDisplay.classList.toggle("hidden");
+        this.inputDisplay.classList.toggle("hidden");
+      },
+    };
   };
 
+  let playersAdded = 0;
   let playerOneTurn = true;
-  const inputDisplay1 = document.querySelector(".first-player");
-  const inputDisplay2 = document.querySelector(".second-player");
-  const playerOneName = document.querySelector(".player1-name");
-  playerOneName.classList.add("current-turn");
-  playerOneName.classList.add("hidden");
-  const playerTwoName = document.querySelector(".player2-name");
-  playerTwoName.classList.add("hidden");
-  const playerOneInput = document.getElementById("player1");
-  const playerTwoInput = document.getElementById("player2");
-  const addPlayerOne = document.querySelector(".add-player-one");
-  const addPlayerTwo = document.querySelector(".add-player-two");
 
-  addPlayerOne.addEventListener("click", createFirstPlayer);
+  const playerOne = player(
+    ".first-player",
+    "#player1-input",
+    ".player1-name",
+    ".add-player-one"
+  );
 
-  function createFirstPlayer() {
-    playerOne = newPlayer(playerOneInput.value);
+  playerOne.nameDisplay.classList.add("hidden");
+  playerOne.nameDisplay.classList.add("current-turn");
+  playerOne.add.addEventListener("click", addPlayer.bind(playerOne));
+
+  const playerTwo = player(
+    ".second-player",
+    "#player2-input",
+    ".player2-name",
+    ".add-player-two"
+  );
+
+  playerTwo.nameDisplay.classList.add("hidden");
+  playerTwo.add.addEventListener("click", addPlayer.bind(playerTwo));
+
+  function addPlayer() {
+    this.name = this.inputName.value;
+    this.displayName();
+    this.toggleHidden();
     playersAdded++;
-    displayPlayerName(playerOneName, playerOneInput, inputDisplay1);
     gameBoard.displayBoard(playersAdded);
-    console.log(playerOne);
-  }
-
-  addPlayerTwo.addEventListener("click", createSecondPlayer);
-
-  function createSecondPlayer() {
-    playerTwo = newPlayer(playerTwoInput.value);
-    playersAdded++;
-    displayPlayerName(playerTwoName, playerTwoInput, inputDisplay2);
-    gameBoard.displayBoard(playersAdded);
-    console.log(playerTwo);
-  }
-
-  function displayPlayerName(playerName, input, inputDisplay) {
-    playerName.textContent = input.value;
-    playerName.classList.toggle("hidden");
-    inputDisplay.classList.toggle("hidden");
   }
 
   function nextTurn() {
-    playerOneName.classList.toggle("current-turn");
-    playerTwoName.classList.toggle("current-turn");
+    playerOne.nameDisplay.classList.toggle("current-turn");
+    playerTwo.nameDisplay.classList.toggle("current-turn");
     players.playerOneTurn = !players.playerOneTurn;
   }
 
   function resetPlayers() {
-    playerOne = {};
-    playerTwo = {};
-    playerOneName.classList.toggle("hidden");
-    playerTwoName.classList.toggle("hidden");
-    inputDisplay1.classList.toggle("hidden");
-    inputDisplay2.classList.toggle("hidden");
+    playerOne.toggleHidden();
+    playerTwo.toggleHidden();
     playersAdded = 0;
   }
 
   return {
-    playerOne,
-    playerTwo,
     playerOneTurn,
     playersAdded,
     nextTurn,
