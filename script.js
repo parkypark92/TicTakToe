@@ -1,11 +1,6 @@
 //PLAYERS MODULE
 const players = (function () {
-  const player = function (
-    inputDisplayClass,
-    inputNameId,
-    nameDisplayClass,
-    joinButtonClass
-  ) {
+  const player = function (inputDisplayClass, inputNameId, nameDisplayClass) {
     return {
       name: "",
       inputDisplay: document.querySelector(inputDisplayClass),
@@ -14,7 +9,6 @@ const players = (function () {
       displayName: function () {
         this.nameDisplay.textContent = this.name;
       },
-      add: document.querySelector(joinButtonClass),
       toggleHidden: function () {
         this.nameDisplay.classList.toggle("hidden");
         this.inputDisplay.classList.toggle("hidden");
@@ -25,26 +19,14 @@ const players = (function () {
   let playersAdded = 0;
   let playerOneTurn = true;
 
-  const playerOne = player(
-    ".first-player",
-    "#player1-input",
-    ".player1-name",
-    ".add-player-one"
-  );
+  const playerOne = player(".first-player", "#player1-input", ".player1-name");
 
   playerOne.nameDisplay.classList.add("hidden");
   playerOne.nameDisplay.classList.add("current-turn");
-  playerOne.add.addEventListener("click", addPlayer.bind(playerOne));
 
-  const playerTwo = player(
-    ".second-player",
-    "#player2-input",
-    ".player2-name",
-    ".add-player-two"
-  );
+  const playerTwo = player(".second-player", "#player2-input", ".player2-name");
 
   playerTwo.nameDisplay.classList.add("hidden");
-  playerTwo.add.addEventListener("click", addPlayer.bind(playerTwo));
 
   function addPlayer() {
     this.name = this.inputName.value;
@@ -71,6 +53,9 @@ const players = (function () {
     playersAdded,
     nextPlayerTurn,
     resetPlayers,
+    addPlayer,
+    playerOne,
+    playerTwo,
   };
 })();
 
@@ -131,9 +116,19 @@ const gameControls = (function () {
     },
     cacheDom: function () {
       this.reset = document.querySelector(".reset-button");
+      this.join1 = document.querySelector(".add-player-one");
+      this.join2 = document.querySelector(".add-player-two");
     },
     bindEvents: function () {
       this.reset.addEventListener("click", resetGame);
+      this.join1.addEventListener(
+        "click",
+        players.addPlayer.bind(players.playerOne)
+      );
+      this.join2.addEventListener(
+        "click",
+        players.addPlayer.bind(players.playerTwo)
+      );
     },
   };
 
