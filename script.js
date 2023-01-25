@@ -54,7 +54,7 @@ const players = (function () {
     gameBoard.displayBoard(playersAdded);
   }
 
-  function nextTurn() {
+  function nextPlayerTurn() {
     playerOne.nameDisplay.classList.toggle("current-turn");
     playerTwo.nameDisplay.classList.toggle("current-turn");
     players.playerOneTurn = !players.playerOneTurn;
@@ -69,7 +69,7 @@ const players = (function () {
   return {
     playerOneTurn,
     playersAdded,
-    nextTurn,
+    nextPlayerTurn,
     resetPlayers,
   };
 })();
@@ -103,7 +103,7 @@ const gameBoard = (function () {
     } else {
       e.target.textContent = "O";
     }
-    players.nextTurn();
+    players.nextPlayerTurn();
   }
 
   function displayBoard(numberOfPlayers) {
@@ -124,11 +124,23 @@ const gameBoard = (function () {
 
 //CONTROLS MODULE
 const gameControls = (function () {
-  const resetButton = document.querySelector(".reset-button");
-  resetButton.addEventListener("click", resetGame);
+  const buttons = {
+    init: function () {
+      this.cacheDom();
+      this.bindEvents();
+    },
+    cacheDom: function () {
+      this.reset = document.querySelector(".reset-button");
+    },
+    bindEvents: function () {
+      this.reset.addEventListener("click", resetGame);
+    },
+  };
 
   function resetGame() {
     players.resetPlayers();
     gameBoard.clear();
   }
+
+  buttons.init();
 })();
