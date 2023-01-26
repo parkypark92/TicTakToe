@@ -19,13 +19,19 @@ const players = (function () {
   let playersAdded = 0;
   let playerOneTurn = true;
 
-  const playerOne = player(".first-player", "#player1-input", ".player1-name");
-
+  const playerOne = player(
+    ".player1-input-display",
+    "#player1-input",
+    ".player1-name"
+  );
   playerOne.nameDisplay.classList.add("hidden");
   playerOne.nameDisplay.classList.add("current-turn");
 
-  const playerTwo = player(".second-player", "#player2-input", ".player2-name");
-
+  const playerTwo = player(
+    ".player2-input-display",
+    "#player2-input",
+    ".player2-name"
+  );
   playerTwo.nameDisplay.classList.add("hidden");
 
   function addPlayer() {
@@ -63,30 +69,36 @@ const players = (function () {
 const gameBoard = (function () {
   const gameplayArea = document.querySelector(".game-play-area");
   gameplayArea.classList.add("hidden");
-  const tl = document.getElementById("top-left");
-  const tc = document.getElementById("top-center");
-  const tr = document.getElementById("top-right");
-  const lc = document.getElementById("left-center");
-  const c = document.getElementById("center");
-  const rc = document.getElementById("right-center");
-  const bl = document.getElementById("bottom-left");
-  const bc = document.getElementById("bottom-center");
-  const br = document.getElementById("bottom-right");
+  const tl = { square: document.getElementById("top-left") };
+  const tc = { square: document.getElementById("top-center") };
+  const tr = { square: document.getElementById("top-right") };
+  const lc = { square: document.getElementById("left-center") };
+  const c = { square: document.getElementById("center") };
+  const rc = { square: document.getElementById("right-center") };
+  const bl = { square: document.getElementById("bottom-left") };
+  const bc = { square: document.getElementById("bottom-center") };
+  const br = { square: document.getElementById("bottom-right") };
 
-  const gameSquares = [tl, tc, tr, lc, c, rc, bl, bc, br];
+  const gameSquares = [
+    [tl, tc, tr],
+    [lc, c, rc],
+    [bl, bc, br],
+  ];
 
-  for (let square of gameSquares) {
-    square.addEventListener("click", draw);
+  for (let row of gameSquares) {
+    for (let data of row) {
+      data.square.addEventListener("click", draw);
+    }
   }
 
-  function draw(e) {
-    if (e.target.textContent !== "") {
+  function draw() {
+    if (this.textContent !== "") {
       return;
     }
     if (players.playerOneTurn) {
-      e.target.textContent = "X";
+      this.textContent = "X";
     } else {
-      e.target.textContent = "O";
+      this.textContent = "O";
     }
     players.nextPlayerTurn();
   }
@@ -108,7 +120,7 @@ const gameBoard = (function () {
 })();
 
 //CONTROLS MODULE
-const gameControls = (function () {
+(function () {
   const buttons = {
     init: function () {
       this.cacheDom();
