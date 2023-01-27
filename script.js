@@ -13,6 +13,7 @@ const players = (function () {
         this.nameDisplay.classList.toggle("hidden");
         this.inputDisplay.classList.toggle("hidden");
       },
+      hasWon: false,
     };
   };
 
@@ -67,17 +68,27 @@ const players = (function () {
 
 //GAME BOARD MODULE
 const gameBoard = (function () {
+  let winner = false;
   const gameplayArea = document.querySelector(".game-play-area");
   gameplayArea.classList.add("hidden");
-  const tl = { square: document.getElementById("top-left") };
-  const tc = { square: document.getElementById("top-center") };
-  const tr = { square: document.getElementById("top-right") };
-  const lc = { square: document.getElementById("left-center") };
-  const c = { square: document.getElementById("center") };
-  const rc = { square: document.getElementById("right-center") };
-  const bl = { square: document.getElementById("bottom-left") };
-  const bc = { square: document.getElementById("bottom-center") };
-  const br = { square: document.getElementById("bottom-right") };
+
+  const gameSquare = function (elementID) {
+    return {
+      square: document.getElementById(elementID),
+      X: false,
+      O: false,
+    };
+  };
+
+  const tl = gameSquare("top-left");
+  const tc = gameSquare("top-center");
+  const tr = gameSquare("top-right");
+  const lc = gameSquare("left-center");
+  const c = gameSquare("center");
+  const rc = gameSquare("right-center");
+  const bl = gameSquare("bottom-left");
+  const bc = gameSquare("bottom-center");
+  const br = gameSquare("bottom-right");
 
   const gameSquares = [
     [tl, tc, tr],
@@ -87,20 +98,44 @@ const gameBoard = (function () {
 
   for (let row of gameSquares) {
     for (let data of row) {
-      data.square.addEventListener("click", draw);
+      data.square.addEventListener("click", draw.bind(data), true);
     }
   }
 
   function draw() {
-    if (this.textContent !== "") {
+    if (this.square.textContent !== "" || winner === true) {
       return;
     }
     if (players.playerOneTurn) {
-      this.textContent = "X";
+      this.square.textContent = "X";
+      this.X = true;
+      checkWin("X");
     } else {
-      this.textContent = "O";
+      this.square.textContent = "O";
+      this.O = true;
+      checkWin("O");
     }
     players.nextPlayerTurn();
+  }
+
+  function checkWin(marker) {
+    if (
+      (tl[marker] && tc[marker] && tr[marker]) ||
+      (lc[marker] && c[marker] && rc[marker]) ||
+      (bl[marker] && bc[marker] && br[marker]) ||
+      (tl[marker] && lc[marker] && bl[marker]) ||
+      (tc[marker] && c[marker] && bc[marker]) ||
+      (tr[marker] && rc[marker] && br[marker]) ||
+      (tl[marker] && c[marker] && br[marker]) ||
+      (tr[marker] && c[marker] && bl[marker])
+    ) {
+      if (marker === "X") {
+        players.playerOne.hasWon = true;
+      } else {
+        players.playerTwo.hasWon = true;
+      }
+      winner = true;
+    }
   }
 
   function displayBoard(numberOfPlayers) {
@@ -110,10 +145,15 @@ const gameBoard = (function () {
   }
 
   function clear() {
-    for (let square of gameSquares) {
-      square.textContent = "";
+    for (let row of gameSquares) {
+      for (let data of row) {
+        data.square.textContent = "";
+        data.X = false;
+        data.O = false;
+      }
     }
     gameplayArea.classList.toggle("hidden");
+    winner = false;
   }
 
   return { displayBoard, clear };
