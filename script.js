@@ -78,6 +78,7 @@ const gameBoard = (function () {
       square: document.getElementById(elementID),
       X: false,
       O: false,
+      isFilled: false,
     };
   };
 
@@ -99,7 +100,7 @@ const gameBoard = (function () {
 
   for (let row of gameSquares) {
     for (let data of row) {
-      data.square.addEventListener("click", draw.bind(data), true);
+      data.square.addEventListener("click", draw.bind(data));
     }
   }
 
@@ -110,10 +111,12 @@ const gameBoard = (function () {
     if (players.playerOneTurn) {
       this.square.textContent = "X";
       this.X = true;
+      this.isFilled = true;
       checkWin("X");
     } else {
       this.square.textContent = "O";
       this.O = true;
+      this.isFilled = true;
       checkWin("O");
     }
     players.nextPlayerTurn();
@@ -138,6 +141,18 @@ const gameBoard = (function () {
         winnerDisplay.textContent = `${players.playerTwo.name} WINS!`;
       }
       winner = true;
+    } else if (
+      tl.isFilled &&
+      tc.isFilled &&
+      tr.isFilled &&
+      lc.isFilled &&
+      c.isFilled &&
+      rc.isFilled &&
+      bl.isFilled &&
+      bc.isFilled &&
+      br.isFilled
+    ) {
+      winnerDisplay.textContent = `It's a TIE!`;
     }
   }
 
@@ -157,6 +172,7 @@ const gameBoard = (function () {
         data.square.textContent = "";
         data.X = false;
         data.O = false;
+        data.isFilled = false;
       }
     }
     winnerDisplay.textContent = "";
