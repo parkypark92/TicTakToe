@@ -71,6 +71,7 @@ const gameBoard = (function () {
   let winner = false;
   const gameplayArea = document.querySelector(".game-play-area");
   gameplayArea.classList.add("hidden");
+  const winnerDisplay = document.querySelector(".winner-display");
 
   const gameSquare = function (elementID) {
     return {
@@ -131,8 +132,10 @@ const gameBoard = (function () {
     ) {
       if (marker === "X") {
         players.playerOne.hasWon = true;
+        winnerDisplay.textContent = `${players.playerOne.name} WINS!`;
       } else {
         players.playerTwo.hasWon = true;
+        winnerDisplay.textContent = `${players.playerTwo.name} WINS!`;
       }
       winner = true;
     }
@@ -144,6 +147,10 @@ const gameBoard = (function () {
     }
   }
 
+  function hideBoard() {
+    gameplayArea.classList.toggle("hidden");
+  }
+
   function clear() {
     for (let row of gameSquares) {
       for (let data of row) {
@@ -152,11 +159,11 @@ const gameBoard = (function () {
         data.O = false;
       }
     }
-    gameplayArea.classList.toggle("hidden");
+    winnerDisplay.textContent = "";
     winner = false;
   }
 
-  return { displayBoard, clear };
+  return { displayBoard, hideBoard, clear };
 })();
 
 //CONTROLS MODULE
@@ -168,11 +175,13 @@ const gameBoard = (function () {
     },
     cacheDom: function () {
       this.reset = document.querySelector(".reset-button");
+      this.playAgain = document.querySelector(".play-again");
       this.join1 = document.querySelector(".add-player-one");
       this.join2 = document.querySelector(".add-player-two");
     },
     bindEvents: function () {
       this.reset.addEventListener("click", resetGame);
+      this.playAgain.addEventListener("click", gameBoard.clear);
       this.join1.addEventListener(
         "click",
         players.addPlayer.bind(players.playerOne)
@@ -187,6 +196,7 @@ const gameBoard = (function () {
   function resetGame() {
     players.resetPlayers();
     gameBoard.clear();
+    gameBoard.hideBoard();
   }
 
   buttons.init();
