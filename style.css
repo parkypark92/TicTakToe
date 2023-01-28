@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
+
 * {
     padding: 0;
     margin: 0;
@@ -10,11 +12,11 @@ html {
 
 body {
     min-height: 100%;
+    background-color: #FFF1DE;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    gap: 60px;
+    
 }
 
 .verses {
@@ -49,23 +51,69 @@ body {
 }
 
 .winner-display {
-    height: 20px;
+  height: 115px;
+  padding-top: 50px;
+  color: blue;
+  font-weight: bold;
+  font-size: 2em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.play-again {
+    height: 120px;
+    display: flex;
+    align-items: center;
+}
+
+.play-again-button {
+    height: 30px;
+    width: 120px;
 }
 
 table {
-    border: 1px solid black;
+    border-collapse: collapse;
+    outline: 2px solid rgba(0, 0, 0, 0.123);
+    outline-offset: 15px;
 }
 
 td {
     height: 150px;
     width: 150px;
-    border: 1px solid black;
     text-align: center;
     font-size: 5em;
+    font-family: 'Permanent Marker';
 }
 
-.play-again {
-    margin: 50px 20px 0px 0px;
+#center {
+    border: 5px solid black;
+}
+
+#top-left {
+    border-right: 5px solid black;
+    border-bottom: 5px solid black;
+}
+
+#top-right {
+    border-left: 5px solid black;
+    border-bottom: 5px solid black;
+}
+
+#bottom-left {
+    border-right: 5px solid black;
+    border-top: 5px solid black;
+}
+
+#bottom-right {
+    border-left: 5px solid black;
+    border-top: 5px solid black;
+}
+
+.reset-button {
+    margin-top: 50px;
+    height: 25px;
+    width: 100px;
 }
 
 .hidden {

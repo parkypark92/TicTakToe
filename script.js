@@ -19,6 +19,7 @@ const players = (function () {
 
   let playersAdded = 0;
   let playerOneTurn = true;
+  const versesDisplay = document.querySelector(".verses");
 
   const playerOne = player(
     ".player1-input-display",
@@ -63,6 +64,7 @@ const players = (function () {
     addPlayer,
     playerOne,
     playerTwo,
+    versesDisplay,
   };
 })();
 
@@ -72,6 +74,7 @@ const gameBoard = (function () {
   const gameplayArea = document.querySelector(".game-play-area");
   gameplayArea.classList.add("hidden");
   const winnerDisplay = document.querySelector(".winner-display");
+  winnerDisplay.classList.add("hidden");
 
   const gameSquare = function (elementID) {
     return {
@@ -141,6 +144,9 @@ const gameBoard = (function () {
         winnerDisplay.textContent = `${players.playerTwo.name} WINS!`;
       }
       winner = true;
+      winnerDisplay.classList.remove("hidden");
+      buttons.playAgain.classList.toggle("hidden");
+      players.versesDisplay.classList.add("hidden");
     } else if (
       tl.isFilled &&
       tc.isFilled &&
@@ -153,6 +159,9 @@ const gameBoard = (function () {
       br.isFilled
     ) {
       winnerDisplay.textContent = `It's a TIE!`;
+      winnerDisplay.classList.remove("hidden");
+      players.versesDisplay.classList.add("hidden");
+      buttons.playAgain.classList.remove("hidden");
     }
   }
 
@@ -175,39 +184,28 @@ const gameBoard = (function () {
         data.isFilled = false;
       }
     }
-    winnerDisplay.textContent = "";
+    winnerDisplay.classList.add("hidden");
     winner = false;
+    buttons.playAgain.classList.add("hidden");
+    players.versesDisplay.classList.remove("hidden");
   }
 
   return { displayBoard, hideBoard, clear };
 })();
 
 //CONTROLS MODULE
-(function () {
-  const buttons = {
-    init: function () {
-      this.cacheDom();
-      this.bindEvents();
-    },
-    cacheDom: function () {
-      this.reset = document.querySelector(".reset-button");
-      this.playAgain = document.querySelector(".play-again");
-      this.join1 = document.querySelector(".add-player-one");
-      this.join2 = document.querySelector(".add-player-two");
-    },
-    bindEvents: function () {
-      this.reset.addEventListener("click", resetGame);
-      this.playAgain.addEventListener("click", gameBoard.clear);
-      this.join1.addEventListener(
-        "click",
-        players.addPlayer.bind(players.playerOne)
-      );
-      this.join2.addEventListener(
-        "click",
-        players.addPlayer.bind(players.playerTwo)
-      );
-    },
-  };
+const buttons = (function () {
+  const reset = document.querySelector(".reset-button");
+  const playAgain = document.querySelector(".play-again-button");
+  const join1 = document.querySelector(".add-player-one");
+  const join2 = document.querySelector(".add-player-two");
+
+  reset.addEventListener("click", resetGame);
+  playAgain.addEventListener("click", gameBoard.clear);
+  join1.addEventListener("click", players.addPlayer.bind(players.playerOne));
+  join2.addEventListener("click", players.addPlayer.bind(players.playerTwo));
+
+  playAgain.classList.add("hidden");
 
   function resetGame() {
     players.resetPlayers();
@@ -215,5 +213,5 @@ const gameBoard = (function () {
     gameBoard.hideBoard();
   }
 
-  buttons.init();
+  return { playAgain };
 })();
