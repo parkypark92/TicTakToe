@@ -41,6 +41,9 @@ const players = (function () {
     this.setName();
     this.displayName();
     this.toggleHidden();
+    if (this === computer.AI) {
+      computer.AI.init = true;
+    }
     playersAdded++;
     gameBoard.displayBoard(playersAdded);
   }
@@ -48,6 +51,7 @@ const players = (function () {
   function nextPlayerTurn() {
     playerOne.nameDisplay.classList.toggle("current-turn");
     playerTwo.nameDisplay.classList.toggle("current-turn");
+    computer.AI.nameDisplay.classList.toggle("current-turn");
     players.playerOneTurn = !players.playerOneTurn;
   }
 
@@ -73,6 +77,7 @@ const players = (function () {
 // -----------------------------COMPUTER AI MODULE
 const computer = (function () {
   const AI = {
+    init: false,
     name: "",
     nameDisplay: document.querySelector(".computer-name"),
     setName: function () {
@@ -165,6 +170,8 @@ const gameBoard = (function () {
       if (marker === "X") {
         players.playerOne.hasWon = true;
         winnerDisplay.textContent = `${players.playerOne.name} WINS!`;
+      } else if (computer.AI.init === true) {
+        winnerDisplay.textContent = `Computer WINS!`;
       } else {
         players.playerTwo.hasWon = true;
         winnerDisplay.textContent = `${players.playerTwo.name} WINS!`;
