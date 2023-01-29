@@ -1,11 +1,17 @@
-//PLAYERS MODULE
+//---------------------------PLAYERS MODULE
 const players = (function () {
+  let playersAdded = 0;
+  let playerOneTurn = true;
+  const versesDisplay = document.querySelector(".verses");
   const player = function (inputDisplayClass, inputNameId, nameDisplayClass) {
     return {
       name: "",
       inputDisplay: document.querySelector(inputDisplayClass),
       inputName: document.querySelector(inputNameId),
       nameDisplay: document.querySelector(nameDisplayClass),
+      setName: function () {
+        this.name = this.inputName.value;
+      },
       displayName: function () {
         this.nameDisplay.textContent = this.name;
       },
@@ -17,27 +23,22 @@ const players = (function () {
     };
   };
 
-  let playersAdded = 0;
-  let playerOneTurn = true;
-  const versesDisplay = document.querySelector(".verses");
-
   const playerOne = player(
     ".player1-input-display",
     "#player1-input",
     ".player1-name"
   );
-  playerOne.nameDisplay.classList.add("hidden");
-  playerOne.nameDisplay.classList.add("current-turn");
-
   const playerTwo = player(
-    ".player2-input-display",
+    ".choose-player2",
     "#player2-input",
     ".player2-name"
   );
+  playerOne.nameDisplay.classList.add("hidden");
+  playerOne.nameDisplay.classList.add("current-turn");
   playerTwo.nameDisplay.classList.add("hidden");
 
   function addPlayer() {
-    this.name = this.inputName.value;
+    this.setName();
     this.displayName();
     this.toggleHidden();
     playersAdded++;
@@ -52,6 +53,7 @@ const players = (function () {
 
   function resetPlayers() {
     playerOne.toggleHidden();
+    playerTwo.nameDisplay.classList.remove("hidden");
     playerTwo.toggleHidden();
     playersAdded = 0;
   }
@@ -68,7 +70,33 @@ const players = (function () {
   };
 })();
 
-//GAME BOARD MODULE
+// -----------------------------COMPUTER AI MODULE
+const computer = (function () {
+  const AI = {
+    name: "",
+    nameDisplay: document.querySelector(".computer-name"),
+    setName: function () {
+      this.name = "Computer";
+    },
+    displayName: function () {
+      this.nameDisplay.textContent = this.name;
+    },
+    toggleHidden: function () {
+      this.nameDisplay.classList.toggle("hidden");
+      players.playerTwo.inputDisplay.classList.toggle("hidden");
+    },
+  };
+
+  AI.nameDisplay.classList.add("hidden");
+
+  function resetComputer() {
+    AI.nameDisplay.classList.add("hidden");
+  }
+
+  return { AI, resetComputer };
+})();
+
+//------------------------------GAME BOARD MODULE
 const gameBoard = (function () {
   let winner = false;
   const gameplayArea = document.querySelector(".game-play-area");
@@ -84,7 +112,6 @@ const gameBoard = (function () {
       isFilled: false,
     };
   };
-
   const tl = gameSquare("top-left");
   const tc = gameSquare("top-center");
   const tr = gameSquare("top-right");
@@ -94,7 +121,6 @@ const gameBoard = (function () {
   const bl = gameSquare("bottom-left");
   const bc = gameSquare("bottom-center");
   const br = gameSquare("bottom-right");
-
   const gameSquares = [
     [tl, tc, tr],
     [lc, c, rc],
@@ -193,17 +219,19 @@ const gameBoard = (function () {
   return { displayBoard, hideBoard, clear };
 })();
 
-//CONTROLS MODULE
+//-----------------------------CONTROLS MODULE
 const buttons = (function () {
   const reset = document.querySelector(".reset-button");
   const playAgain = document.querySelector(".play-again-button");
   const join1 = document.querySelector(".add-player-one");
   const join2 = document.querySelector(".add-player-two");
+  const playComputer = document.querySelector(".play-computer");
 
   reset.addEventListener("click", resetGame);
   playAgain.addEventListener("click", gameBoard.clear);
   join1.addEventListener("click", players.addPlayer.bind(players.playerOne));
   join2.addEventListener("click", players.addPlayer.bind(players.playerTwo));
+  playComputer.addEventListener("click", players.addPlayer.bind(computer.AI));
 
   playAgain.classList.add("hidden");
 
@@ -211,6 +239,7 @@ const buttons = (function () {
     players.resetPlayers();
     gameBoard.clear();
     gameBoard.hideBoard();
+    computer.resetComputer();
   }
 
   return { playAgain };

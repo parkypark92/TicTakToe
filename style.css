@@ -1,5 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
 
+:root {
+    --customyellow:  #F4F3D8;
+    --customgreen: #56b1b6;
+    --custompink: #e492a0;
+}
+
+
 * {
     padding: 0;
     margin: 0;
@@ -12,7 +19,7 @@ html {
 
 body {
     min-height: 100%;
-    background-color: #FFF1DE;
+    background-color: var(--customyellow);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -20,9 +27,10 @@ body {
 }
 
 .verses {
-    height: 115px;
+    height: 200px;
     width: 550px;
     padding-top: 50px;
+    color: var(--customgreen);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -34,7 +42,11 @@ body {
     flex-direction: column;
 }
 
-.player1-name, .player2-name {
+#player1-input, #player2-input {
+    background-color: var(--custompink);
+}
+
+.player1-name, .player2-name, .computer-name {
     width: 200px;
     font-size: 2em;
     font-weight: bold;
@@ -46,14 +58,22 @@ body {
     font-weight: bold;
 }
 
+.choose-player2 {
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
 .current-turn {
-    background-color: rgb(58, 224, 58);
+    background-color: #e492a07e;
+    border-radius: 15px;
 }
 
 .winner-display {
-  height: 115px;
+  height: 200px;
   padding-top: 50px;
-  color: blue;
+  color: var(--custompink);
   font-weight: bold;
   font-size: 2em;
   display: flex;
@@ -84,36 +104,38 @@ td {
     text-align: center;
     font-size: 5em;
     font-family: 'Permanent Marker';
+    color: var(--customgreen);
 }
 
 #center {
-    border: 5px solid black;
+    border: 5px solid var(--custompink);
 }
 
 #top-left {
-    border-right: 5px solid black;
-    border-bottom: 5px solid black;
+    border-right: 5px solid var(--custompink);
+    border-bottom: 5px solid var(--custompink);
 }
 
 #top-right {
-    border-left: 5px solid black;
-    border-bottom: 5px solid black;
+    border-left: 5px solid var(--custompink);
+    border-bottom: 5px solid var(--custompink);
 }
 
 #bottom-left {
-    border-right: 5px solid black;
-    border-top: 5px solid black;
+    border-right: 5px solid var(--custompink);
+    border-top: 5px solid var(--custompink);
 }
 
 #bottom-right {
-    border-left: 5px solid black;
-    border-top: 5px solid black;
+    border-left: 5px solid var(--custompink);
+    border-top: 5px solid var(--custompink);
 }
 
 .reset-button {
     margin-top: 50px;
     height: 25px;
     width: 100px;
+    margin-left: -16px;
 }
 
 .hidden {
