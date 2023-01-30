@@ -99,6 +99,7 @@ const computer = (function () {
 
   function checkTurn() {
     if (computer.AI.init === false) {
+      gameBoard.clickable();
       return;
     } else if (computer.AI.nameDisplay.classList.contains("current-turn")) {
       takeTurn();
@@ -106,6 +107,9 @@ const computer = (function () {
   }
 
   function takeTurn() {
+    if (gameBoard.winner) {
+      return;
+    }
     let availableMoves = gameBoard.gameSquares.filter(
       (item) => item.square.textContent === ""
     );
@@ -113,7 +117,7 @@ const computer = (function () {
       return Math.floor(Math.random() * availableMoves.length);
     };
     const draw = gameBoard.draw.bind(availableMoves[randomNum()]);
-    draw();
+    setTimeout(draw, 1500);
   }
 
   function resetComputer() {
@@ -163,11 +167,13 @@ const gameBoard = (function () {
       this.square.textContent = "X";
       this.X = true;
       this.isFilled = true;
+      unClickable();
       checkWin("X");
     } else {
       this.square.textContent = "O";
       this.O = true;
       this.isFilled = true;
+      clickable();
       checkWin("O");
     }
     players.nextPlayerTurn();
@@ -240,7 +246,27 @@ const gameBoard = (function () {
     computer.checkTurn();
   }
 
-  return { gameSquares, draw, displayBoard, hideBoard, clear };
+  function clickable() {
+    for (let data of gameBoard.gameSquares) {
+      data.square.classList.remove("no-click");
+    }
+  }
+
+  function unClickable() {
+    for (let data of gameBoard.gameSquares) {
+      data.square.classList.add("no-click");
+    }
+  }
+
+  return {
+    gameSquares,
+    winner,
+    draw,
+    displayBoard,
+    hideBoard,
+    clear,
+    clickable,
+  };
 })();
 
 //-----------------------------CONTROLS MODULE

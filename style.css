@@ -141,3 +141,7 @@ td {
 .hidden {
     display: none;
 }
+
+.no-click {
+    pointer-events: none;
+}
