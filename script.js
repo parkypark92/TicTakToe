@@ -60,6 +60,9 @@ const players = (function () {
     playerTwo.nameDisplay.classList.remove("hidden");
     playerTwo.toggleHidden();
     playersAdded = 0;
+    if (!playerOne.nameDisplay.classList.contains("current-turn")) {
+      nextPlayerTurn();
+    }
   }
 
   return {
@@ -94,11 +97,31 @@ const computer = (function () {
 
   AI.nameDisplay.classList.add("hidden");
 
-  function resetComputer() {
-    AI.nameDisplay.classList.add("hidden");
+  function checkTurn() {
+    if (computer.AI.init === false) {
+      return;
+    } else if (computer.AI.nameDisplay.classList.contains("current-turn")) {
+      takeTurn();
+    }
   }
 
-  return { AI, resetComputer };
+  function takeTurn() {
+    let availableMoves = gameBoard.gameSquares.filter(
+      (item) => item.square.textContent === ""
+    );
+    let randomNum = function () {
+      return Math.floor(Math.random() * availableMoves.length);
+    };
+    const draw = gameBoard.draw.bind(availableMoves[randomNum()]);
+    draw();
+  }
+
+  function resetComputer() {
+    AI.nameDisplay.classList.add("hidden");
+    AI.init = false;
+  }
+
+  return { AI, checkTurn, resetComputer };
 })();
 
 //------------------------------GAME BOARD MODULE
@@ -126,16 +149,10 @@ const gameBoard = (function () {
   const bl = gameSquare("bottom-left");
   const bc = gameSquare("bottom-center");
   const br = gameSquare("bottom-right");
-  const gameSquares = [
-    [tl, tc, tr],
-    [lc, c, rc],
-    [bl, bc, br],
-  ];
+  const gameSquares = [tl, tc, tr, lc, c, rc, bl, bc, br];
 
-  for (let row of gameSquares) {
-    for (let data of row) {
-      data.square.addEventListener("click", draw.bind(data));
-    }
+  for (let data of gameSquares) {
+    data.square.addEventListener("click", draw.bind(data));
   }
 
   function draw() {
@@ -154,6 +171,7 @@ const gameBoard = (function () {
       checkWin("O");
     }
     players.nextPlayerTurn();
+    computer.checkTurn();
   }
 
   function checkWin(marker) {
@@ -209,21 +227,20 @@ const gameBoard = (function () {
   }
 
   function clear() {
-    for (let row of gameSquares) {
-      for (let data of row) {
-        data.square.textContent = "";
-        data.X = false;
-        data.O = false;
-        data.isFilled = false;
-      }
+    for (let data of gameSquares) {
+      data.square.textContent = "";
+      data.X = false;
+      data.O = false;
+      data.isFilled = false;
     }
     winnerDisplay.classList.add("hidden");
     winner = false;
     buttons.playAgain.classList.add("hidden");
     players.versesDisplay.classList.remove("hidden");
+    computer.checkTurn();
   }
 
-  return { displayBoard, hideBoard, clear };
+  return { gameSquares, draw, displayBoard, hideBoard, clear };
 })();
 
 //-----------------------------CONTROLS MODULE
