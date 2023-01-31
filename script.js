@@ -2,6 +2,7 @@
 const players = (function () {
   let playersAdded = 0;
   let playerOneTurn = true;
+  let goFirst = true;
   const versesDisplay = document.querySelector(".verses");
   const player = function (inputDisplayClass, inputNameId, nameDisplayClass) {
     return {
@@ -60,6 +61,7 @@ const players = (function () {
     playerTwo.nameDisplay.classList.remove("hidden");
     playerTwo.toggleHidden();
     playersAdded = 0;
+    players.goFirst = true;
     if (!playerOne.nameDisplay.classList.contains("current-turn")) {
       nextPlayerTurn();
     }
@@ -74,6 +76,7 @@ const players = (function () {
     playerOne,
     playerTwo,
     versesDisplay,
+    goFirst,
   };
 })();
 
@@ -102,12 +105,14 @@ const computer = (function () {
       gameBoard.clickable();
       return;
     } else if (computer.AI.nameDisplay.classList.contains("current-turn")) {
+      buttons.reset.disabled = true;
       takeTurn();
     }
   }
 
   function takeTurn() {
-    if (gameBoard.winner) {
+    if (gameBoard.winner === true) {
+      buttons.reset.disabled = false;
       return;
     }
     let availableMoves = gameBoard.gameSquares.filter(
@@ -117,7 +122,9 @@ const computer = (function () {
       return Math.floor(Math.random() * availableMoves.length);
     };
     const draw = gameBoard.draw.bind(availableMoves[randomNum()]);
-    setTimeout(draw, 1500);
+    if (availableMoves.length > 0) {
+      setTimeout(draw, 1500);
+    }
   }
 
   function resetComputer() {
@@ -160,7 +167,7 @@ const gameBoard = (function () {
   }
 
   function draw() {
-    if (this.square.textContent !== "" || winner === true) {
+    if (gameBoard.winner === true || this.square.textContent !== "") {
       return;
     }
     if (players.playerOneTurn) {
@@ -174,6 +181,7 @@ const gameBoard = (function () {
       this.O = true;
       this.isFilled = true;
       clickable();
+      buttons.reset.disabled = false;
       checkWin("O");
     }
     players.nextPlayerTurn();
@@ -200,7 +208,8 @@ const gameBoard = (function () {
         players.playerTwo.hasWon = true;
         winnerDisplay.textContent = `${players.playerTwo.name} WINS!`;
       }
-      winner = true;
+      gameBoard.winner = true;
+      players.goFirst = !players.goFirst;
       winnerDisplay.classList.remove("hidden");
       buttons.playAgain.classList.toggle("hidden");
       players.versesDisplay.classList.add("hidden");
@@ -215,6 +224,8 @@ const gameBoard = (function () {
       bc.isFilled &&
       br.isFilled
     ) {
+      gameBoard.winner = true;
+      players.goFirst = !players.goFirst;
       winnerDisplay.textContent = `It's a TIE!`;
       winnerDisplay.classList.remove("hidden");
       players.versesDisplay.classList.add("hidden");
@@ -240,9 +251,15 @@ const gameBoard = (function () {
       data.isFilled = false;
     }
     winnerDisplay.classList.add("hidden");
-    winner = false;
+    gameBoard.winner = false;
     buttons.playAgain.classList.add("hidden");
     players.versesDisplay.classList.remove("hidden");
+    if (players.goFirst !== players.playerOneTurn) {
+      players.nextPlayerTurn();
+    }
+    if (players.goFirst === true) {
+      clickable();
+    }
     computer.checkTurn();
   }
 
@@ -292,5 +309,5 @@ const buttons = (function () {
     computer.resetComputer();
   }
 
-  return { playAgain };
+  return { playAgain, reset };
 })();
