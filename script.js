@@ -20,7 +20,6 @@ const players = (function () {
         this.nameDisplay.classList.toggle("hidden");
         this.inputDisplay.classList.toggle("hidden");
       },
-      hasWon: false,
     };
   };
 
@@ -111,20 +110,74 @@ const computer = (function () {
   }
 
   function takeTurn() {
-    if (gameBoard.winner === true) {
+    if (gameBoard.finished === true) {
       buttons.reset.disabled = false;
       return;
     }
-    let availableMoves = gameBoard.gameSquares.filter(
-      (item) => item.square.textContent === ""
+    const availableMoves = gameBoard.gameSquares.filter(
+      (item) => !item.isFilled
     );
-    let randomNum = function () {
-      return Math.floor(Math.random() * availableMoves.length);
-    };
-    const draw = gameBoard.draw.bind(availableMoves[randomNum()]);
+
+    const bestMove = minimax(gameBoard.gameSquares, "O");
+
+    const draw = gameBoard.draw.bind(gameBoard.gameSquares[bestMove.index]);
     if (availableMoves.length > 0) {
       setTimeout(draw, 1500);
     }
+  }
+
+  function minimax(currBrdSt, currMark) {
+    const availableSquares = currBrdSt.filter((item) => !item.isFilled);
+
+    if (gameBoard.winState("O")) {
+      return { score: 1 };
+    } else if (gameBoard.winState("X")) {
+      return { score: -1 };
+    } else if (availableSquares.length === 0) {
+      return { score: 0 };
+    }
+
+    const allTestPlays = [];
+
+    for (let i = 0; i < availableSquares.length; i++) {
+      let currentTestPlay = {};
+      currentTestPlay.index = availableSquares[i].index;
+      availableSquares[i][currMark] = true;
+      availableSquares[i].isFilled = true;
+
+      if (currMark === "O") {
+        let result = minimax(currBrdSt, "X");
+        currentTestPlay.score = result.score;
+      } else if (currMark === "X") {
+        let result = minimax(currBrdSt, "O");
+        currentTestPlay.score = result.score;
+      }
+      availableSquares[i][currMark] = false;
+      availableSquares[i].isFilled = false;
+      allTestPlays.push(currentTestPlay);
+    }
+
+    let bestTestPlay = null;
+
+    if (currMark === "O") {
+      let bestScore = -Infinity;
+      for (let i = 0; i < allTestPlays.length; i++) {
+        if (allTestPlays[i].score > bestScore) {
+          bestScore = allTestPlays[i].score;
+          bestTestPlay = i;
+        }
+      }
+    } else {
+      let bestScore = Infinity;
+      for (let i = 0; i < allTestPlays.length; i++) {
+        if (allTestPlays[i].score < bestScore) {
+          bestScore = allTestPlays[i].score;
+          bestTestPlay = i;
+        }
+      }
+    }
+
+    return allTestPlays[bestTestPlay];
   }
 
   function resetComputer() {
@@ -137,29 +190,30 @@ const computer = (function () {
 
 //------------------------------GAME BOARD MODULE
 const gameBoard = (function () {
-  let winner = false;
+  let finished = false;
   const gameplayArea = document.querySelector(".game-play-area");
   gameplayArea.classList.add("hidden");
   const winnerDisplay = document.querySelector(".winner-display");
   winnerDisplay.classList.add("hidden");
 
-  const gameSquare = function (elementID) {
+  const gameSquare = function (elementID, i) {
     return {
       square: document.getElementById(elementID),
       X: false,
       O: false,
       isFilled: false,
+      index: i,
     };
   };
-  const tl = gameSquare("top-left");
-  const tc = gameSquare("top-center");
-  const tr = gameSquare("top-right");
-  const lc = gameSquare("left-center");
-  const c = gameSquare("center");
-  const rc = gameSquare("right-center");
-  const bl = gameSquare("bottom-left");
-  const bc = gameSquare("bottom-center");
-  const br = gameSquare("bottom-right");
+  const tl = gameSquare("top-left", 0);
+  const tc = gameSquare("top-center", 1);
+  const tr = gameSquare("top-right", 2);
+  const lc = gameSquare("left-center", 3);
+  const c = gameSquare("center", 4);
+  const rc = gameSquare("right-center", 5);
+  const bl = gameSquare("bottom-left", 6);
+  const bc = gameSquare("bottom-center", 7);
+  const br = gameSquare("bottom-right", 8);
   const gameSquares = [tl, tc, tr, lc, c, rc, bl, bc, br];
 
   for (let data of gameSquares) {
@@ -167,7 +221,7 @@ const gameBoard = (function () {
   }
 
   function draw() {
-    if (gameBoard.winner === true || this.square.textContent !== "") {
+    if (gameBoard.finished === true || this.square.textContent !== "") {
       return;
     }
     if (players.playerOneTurn) {
@@ -188,7 +242,7 @@ const gameBoard = (function () {
     computer.checkTurn();
   }
 
-  function checkWin(marker) {
+  function winState(marker) {
     if (
       (tl[marker] && tc[marker] && tr[marker]) ||
       (lc[marker] && c[marker] && rc[marker]) ||
@@ -199,20 +253,30 @@ const gameBoard = (function () {
       (tl[marker] && c[marker] && br[marker]) ||
       (tr[marker] && c[marker] && bl[marker])
     ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function setFinishedState() {
+    gameBoard.finished = true;
+    players.goFirst = !players.goFirst;
+    winnerDisplay.classList.remove("hidden");
+    buttons.playAgain.classList.toggle("hidden");
+    players.versesDisplay.classList.add("hidden");
+  }
+
+  function checkWin(marker) {
+    if (winState(marker)) {
       if (marker === "X") {
-        players.playerOne.hasWon = true;
         winnerDisplay.textContent = `${players.playerOne.name} WINS!`;
       } else if (computer.AI.init === true) {
         winnerDisplay.textContent = `Computer WINS!`;
       } else {
-        players.playerTwo.hasWon = true;
         winnerDisplay.textContent = `${players.playerTwo.name} WINS!`;
       }
-      gameBoard.winner = true;
-      players.goFirst = !players.goFirst;
-      winnerDisplay.classList.remove("hidden");
-      buttons.playAgain.classList.toggle("hidden");
-      players.versesDisplay.classList.add("hidden");
+      setFinishedState();
     } else if (
       tl.isFilled &&
       tc.isFilled &&
@@ -224,12 +288,8 @@ const gameBoard = (function () {
       bc.isFilled &&
       br.isFilled
     ) {
-      gameBoard.winner = true;
-      players.goFirst = !players.goFirst;
       winnerDisplay.textContent = `It's a TIE!`;
-      winnerDisplay.classList.remove("hidden");
-      players.versesDisplay.classList.add("hidden");
-      buttons.playAgain.classList.remove("hidden");
+      setFinishedState();
     }
   }
 
@@ -251,7 +311,7 @@ const gameBoard = (function () {
       data.isFilled = false;
     }
     winnerDisplay.classList.add("hidden");
-    gameBoard.winner = false;
+    gameBoard.finished = false;
     buttons.playAgain.classList.add("hidden");
     players.versesDisplay.classList.remove("hidden");
     if (players.goFirst !== players.playerOneTurn) {
@@ -277,8 +337,9 @@ const gameBoard = (function () {
 
   return {
     gameSquares,
-    winner,
+    finished,
     draw,
+    winState,
     displayBoard,
     hideBoard,
     clear,
