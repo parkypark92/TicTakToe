@@ -95,6 +95,7 @@ const computer = (function () {
       this.nameDisplay.classList.toggle("hidden");
       players.playerTwo.inputDisplay.classList.toggle("hidden");
     },
+    level: "",
   };
 
   AI.nameDisplay.classList.add("hidden");
@@ -109,6 +110,13 @@ const computer = (function () {
     }
   }
 
+  function makeMove(square, moves) {
+    const draw = gameBoard.draw.bind(square);
+    if (moves.length > 0) {
+      setTimeout(draw, 1500);
+    }
+  }
+
   function takeTurn() {
     if (gameBoard.finished === true) {
       buttons.reset.disabled = false;
@@ -117,13 +125,17 @@ const computer = (function () {
     const availableMoves = gameBoard.gameSquares.filter(
       (item) => !item.isFilled
     );
-
-    const bestMove = minimax(gameBoard.gameSquares, "O");
-
-    const draw = gameBoard.draw.bind(gameBoard.gameSquares[bestMove.index]);
-    if (availableMoves.length > 0) {
-      setTimeout(draw, 1500);
+    const randomNumber = Math.random();
+    const randomSquare = Math.floor(Math.random() * availableMoves.length);
+    if (
+      (computer.AI.level === "easy" && randomNumber > 0.3) ||
+      (computer.AI.level === "hard" && randomNumber > 0.7)
+    ) {
+      makeMove(availableMoves[randomSquare], availableMoves);
+      return;
     }
+    const bestMove = minimax(gameBoard.gameSquares, "O");
+    makeMove(gameBoard.gameSquares[bestMove.index], availableMoves);
   }
 
   function minimax(currBrdSt, currMark) {
@@ -183,6 +195,7 @@ const computer = (function () {
   function resetComputer() {
     AI.nameDisplay.classList.add("hidden");
     AI.init = false;
+    AI.level = "";
   }
 
   return { AI, checkTurn, resetComputer };
@@ -353,13 +366,34 @@ const buttons = (function () {
   const playAgain = document.querySelector(".play-again-button");
   const join1 = document.querySelector(".add-player-one");
   const join2 = document.querySelector(".add-player-two");
-  const playComputer = document.querySelector(".play-computer");
+  const playComputerEasy = document.querySelector(".easy");
+  const playComputerHard = document.querySelector(".hard");
+  const playComputerUnbeatable = document.querySelector(".unbeatable");
 
   reset.addEventListener("click", resetGame);
   playAgain.addEventListener("click", gameBoard.clear);
   join1.addEventListener("click", players.addPlayer.bind(players.playerOne));
   join2.addEventListener("click", players.addPlayer.bind(players.playerTwo));
-  playComputer.addEventListener("click", players.addPlayer.bind(computer.AI));
+  playComputerEasy.addEventListener(
+    "click",
+    () => (computer.AI.level = "easy")
+  );
+  playComputerEasy.addEventListener(
+    "click",
+    players.addPlayer.bind(computer.AI)
+  );
+  playComputerHard.addEventListener(
+    "click",
+    () => (computer.AI.level = "hard")
+  );
+  playComputerHard.addEventListener(
+    "click",
+    players.addPlayer.bind(computer.AI)
+  );
+  playComputerUnbeatable.addEventListener(
+    "click",
+    players.addPlayer.bind(computer.AI)
+  );
 
   playAgain.classList.add("hidden");
 

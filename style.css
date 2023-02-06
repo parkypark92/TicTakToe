@@ -65,6 +65,12 @@ body {
     justify-content: space-evenly;
 }
 
+.play-computer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
 .current-turn {
     background-color: #e492a07e;
     border-radius: 15px;
