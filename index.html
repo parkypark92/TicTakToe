@@ -14,8 +14,10 @@
             <div class="player1-name"></div>
             <div class="player-input player1-input-display">
                 <h2>Add First Player</h2>
-                <input type="text" name="player-one" id="player1-input" value="Player1" maxlength="10" minlength="1">
-                <button class="add-player-one">JOIN</button>
+                <div class="input-contain">
+                    <input type="text" name="player-one" id="player1-input" value="Player1" maxlength="10" required>
+                    <button class="add-player add-player-one button">JOIN</button>
+                </div>
             </div>
             <div>
                 <p id="vs">VS</p>
@@ -25,21 +27,26 @@
             <div class="choose-player2">
                 <div class="player-input player2-input-display">
                     <h2>Add Second Player</h2>
-                    <input type="text" name="player-two" id="player2-input" value="Player2" maxlength="10" minlength="1">
-                    <button class="add-player-two">JOIN</button>
+                    <div class="input-contain">
+                        <input type="text" name="player-two" id="player2-input" value="Player2" maxlength="10" required>
+                        <button class="add-player add-player-two button">JOIN</button>
+                    </div>
                 </div>
-                <div class="play-computer">
+                <div class="player-input play-computer">
                     <h2>Play Against Computer</h2>
-                    <button class="easy">Easy</button>
-                    <button class="hard">Hard</button>
-                    <button class="unbeatable">Unbeatable!</button>
+                    <div class="computer-buttons">
+                        <button class="easy button">EASY
+                        </button>
+                        <button class="hard button">HARD</button>
+                        <button class="unbeatable button">UNBEATABLE!</button>
+                    </div>
                 </div>
             </div>
         </header>
         <div class="winner-display"></div>
     </div>
     <div class="play-again">
-        <button class="play-again-button">PLAY AGAIN</button>
+        <button class="play-again-button button">PLAY AGAIN</button>
     </div>
     <div class="game-play-area">
         <table>
@@ -60,7 +67,7 @@
             </tr>
         </table>
 
-            <button class="reset-button">RESET</button>
+            <button class="reset-button button">RESET</button>
        
     </div>
 </body>

@@ -128,7 +128,7 @@ const computer = (function () {
     const randomNumber = Math.random();
     const randomSquare = Math.floor(Math.random() * availableMoves.length);
     if (
-      (computer.AI.level === "easy" && randomNumber > 0.3) ||
+      (computer.AI.level === "easy" && randomNumber > 0.4) ||
       (computer.AI.level === "hard" && randomNumber > 0.7)
     ) {
       makeMove(availableMoves[randomSquare], availableMoves);
@@ -372,8 +372,16 @@ const buttons = (function () {
 
   reset.addEventListener("click", resetGame);
   playAgain.addEventListener("click", gameBoard.clear);
-  join1.addEventListener("click", players.addPlayer.bind(players.playerOne));
-  join2.addEventListener("click", players.addPlayer.bind(players.playerTwo));
+  join1.addEventListener("click", () => {
+    if (!(players.playerOne.inputName.value === "")) {
+      players.addPlayer.bind(players.playerOne)();
+    }
+  });
+  join2.addEventListener("click", () => {
+    if (!(players.playerTwo.inputName.value === "")) {
+      players.addPlayer.bind(players.playerTwo)();
+    }
+  });
   playComputerEasy.addEventListener(
     "click",
     () => (computer.AI.level = "easy")
